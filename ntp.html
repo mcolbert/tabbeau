@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script type="text/javascript" src="500px.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Roboto:100' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #444;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 100;
+      color: #eee;
+      overflow: hidden;
+      text-shadow: rgba(34, 34, 34, 0.26) 2px 4px 30px;
+    }
+    .time {
+      font-size: 100px;
+      position: relative;
+      text-align: right;
+      width: 450px;
+      height: 140px;
+    }
+    .divider {
+      display: inline-block;
+    }
+
+    .perspective {
+      -webkit-perspective: 500px;
+      width: 450px;
+      height: 140px;
+      margin-left: 20px;
+      position: relative;
+      -webkit-perspective-origin: 225px 50px;
+    }
+
+    .number {
+      width: 115px;
+      height: 140px;
+      position: absolute;
+      -webkit-transform-origin: 50px 50px -50px;
+      -webkit-backface-visibility: hidden;
+      -webkit-transition: -webkit-transform 0.3s ease-in-out;
+    }
+
+    .second-10 .number, .second-1 .number {
+      width: 60px;
+    }
+
+    .number-rotate-top-face {
+      -webkit-transform: rotateX(100deg);
+    }
+    .number-rotate-bottom-face {
+      -webkit-transform: rotateX(-100deg);
+    }
+
+    .hour {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .hour-divider {
+      position: absolute;
+      top: -10px;
+      left: 130px;
+    }
+
+    .minute {
+      position: absolute;
+      top: 0;
+      left: 155px;
+    }
+    .minute-divider {
+      position: absolute;
+      top: -10px;
+      left: 290px;
+    }
+    .second-10 {
+      position: absolute;
+      top: 0;
+      left: 315px;
+    }
+    .second-1 {
+      position: absolute;
+      top: 0;
+      left: 370px;
+    }
+    .date {
+      position: absolute;
+      right: 25px;
+      letter-spacing: 1px;
+      font-size: 21px;
+      top: 125px;
+      -webkit-transition: all 0.3s ease-in-out 0.5s;
+    }
+    .date.hidden {
+      opacity: 0;
+      -webkit-transform: translate3d(-30px, 0, 0);
+    }
+
+    .ampm {
+      font-size: 30px;
+      position: absolute;
+      left: 440px;
+      top: 25px;
+    }
+    #time-piece {
+      position: absolute;
+    }
+    .bg-image {
+      -webkit-filter: blur(5px);
+      position: absolute;
+      -webkit-transition: opacity 1s ease-in-out;
+    }
+    .bg-image.hidden {
+      opacity: 0;
+    }
+    .vignette {
+      background-image: -webkit-radial-gradient(center,ellipse cover,rgba(0,0,0,0) 50%,rgba(0,0,0,0.8) 100%);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .app-link {
+      position: absolute;
+      right: 10px;
+      bottom: 0;
+      vertical-align: top;
+    }
+    .app-icon {
+      display: inline-block;
+      background-image: url(data:image/png;base64,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);
+      width: 30px;
+      height: 30px;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    .app-text {
+      display: inline-block;
+      margin-top: 3px;
+      vertical-align: top;
+      margin-left: 2px;
+    }
+    a.app-anchor {
+      margin-left: 5px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .app-text:hover {
+      text-decoration: underline;
+    }
+
+    .attribution {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      width: 300px;
+      -webkit-transition: opacity 0.5s linear 0.5s;
+    }
+    .attribution.hidden {
+      opacity: 0;
+    }
+    a.attribution-link {
+      color: #fff;
+      text-decoration: none;
+    }
+    .attribution-image {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+    }
+    .attribution-name {
+      display: inline-block;
+      margin-left: 5px;
+      vertical-align: top;
+      margin-top: 1px;
+    }
+    .attribution-name:hover {
+      text-decoration: underline;
+    }
+    .attribution-site {
+      font-size: 10px;
+      position: absolute;
+      width: 250px;
+      top: 22px;
+      left: 39px;
+    }
+    a.site-link {
+      color: #fff;
+      text-decoration: none;
+    }
+    a.site-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="time-piece" width="450" height="450"></canvas>
+  <script type="text/javascript" src="time-piece.js"></script>
+  <div class="vignette"></div>
+  <div class="perspective">
+    <div class="time">
+      <div class="hour">
+        <div class="number">00</div>
+      </div>
+      <div class="hour-divider">:</div>
+      <div class="minute">
+        <div class="number">00</div>
+      </div>
+      <div class="minute-divider">:</div>
+      <div class="second-10">
+        <div class="number">0</div>
+      </div>
+      <div class="second-1">
+        <div class="number">0</div>
+      </div>
+      <div class="ampm">AM</div>
+    </div>
+    <div class="date hidden">January 1st, 2013</div>
+  </div>
+  <div class="attribution hidden">
+    <a class="attribution-link">
+      <img class="attribution-image">
+      <div class="attribution-name"></div>
+    </a>
+    <div class="attribution-site">
+      Imagery ranked and served from <a class="site-link" href="https://www.500px.com">500px</a>.
+    </div>
+  </div>
+  <div class="app-link">
+      <a class="app-anchor" href="chrome://apps"><div class="app-icon"></div><div class="app-text">Apps</div></a>
+      <a class="app-anchor" href="chrome://bookmarks"><div class="app-text">Bookmarks</div></a>
+  </div>
+  <script type="text/javascript" src="links.js"></script>
+  <script type="text/javascript" src="clock.js"></script>
+  <script type="text/javascript" src="background.js"></script>
+</body>
+</html>

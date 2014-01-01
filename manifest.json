@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "tab.BEAU",
+  "description": "Provides a significantly cleaner and prettier New Tab Page using imagery from 500px.  Also, provides a visually rich clock.",
+  "version": "0.0.3",
+
+  "chrome_url_overrides" : {
+    "newtab": "ntp.html"
+  },
+
+  "icons" : {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+
+  "content_security_policy": "script-src 'self' https://api.500px.com; object-src 'self'"
+}

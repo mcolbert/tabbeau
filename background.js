@@ -32,7 +32,7 @@ function Background() {
         sdk_key: '70ff1e776b3cac6e599e61de733158ad4afc665f'
       });
 
-      _500px.api('/photos', { feature: 'editors', image_size: 5, page: 1 },
+      _500px.api('/photos', { feature: 'popular', image_size: 5, page: 1 },
         function (response) {
           window.localStorage.setItem(CACHE_KEY,
               JSON.stringify({time: Date.now(), photos: response.data.photos}));

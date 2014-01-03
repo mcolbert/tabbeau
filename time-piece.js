@@ -27,7 +27,7 @@ function TimePiece() {
     var endRotAngle = startRotAngle + Math.PI / 180 * 30;  // Offset by 30 degrees.
     var flipRotAngle = 1 + Math.PI * 2;
     var transitionTime = 0.4;
-    var delayShift = 0.1;
+    var delayShift = 0.5;
 
     time -= delayShift;
     time = time < 0 ? 60 + time : time;

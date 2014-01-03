@@ -113,6 +113,7 @@
       -webkit-filter: blur(5px);
       position: absolute;
       -webkit-transition: opacity 1s ease-in-out;
+      -webkit-backface-visibility: hidden;
     }
     .bg-image.hidden {
       opacity: 0;
@@ -128,6 +129,7 @@
       right: 10px;
       bottom: 0;
       vertical-align: top;
+      -webkit-backface-visibility: hidden;
     }
     .app-icon {
       display: inline-block;
@@ -158,6 +160,7 @@
       bottom: 10px;
       width: 300px;
       -webkit-transition: opacity 0.5s linear 0.5s;
+      -webkit-backface-visibility: hidden;
     }
     .attribution.hidden {
       opacity: 0;
@@ -196,7 +199,7 @@
     }
   </style>
 </head>
-<body>
+<body style="background-color: #444;">
   <canvas id="time-piece" width="450" height="450"></canvas>
   <script type="text/javascript" src="time-piece.js"></script>
   <div class="vignette"></div>

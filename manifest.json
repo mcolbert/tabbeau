@@ -3,7 +3,7 @@
 
   "name": "tab.BEAU",
   "description": "Provides a significantly cleaner and prettier New Tab Page using imagery from 500px.  Also, provides a visually rich clock.",
-  "version": "0.0.4",
+  "version": "0.0.5",
 
   "chrome_url_overrides" : {
     "newtab": "ntp.html"

@@ -8,6 +8,11 @@ function Clock() {
   var dateOptions = {month: 'long', day: 'numeric', year: 'numeric'};
   var currentDate = new Date();
 
+  var SECONDS_KEY = 'seconds-visible';
+  var secondsVisible = Utils.getBooleanValue(SECONDS_KEY, false);
+  updateSecondsVisibility();
+
+
   // Set the initial time.
   getCurrentNumberElement('hour').textContent =
       hourToString(currentDate.getHours());
@@ -34,14 +39,16 @@ function Clock() {
     var currStrSecond = timeToString(currentDate.getSeconds());
     var strSecond = timeToString(date.getSeconds());
 
-    if (currStrSecond[0] != strSecond[0]) {
-      animateNewNumber(getNumberContainer('second-10'),
-          getCurrentNumberElement('second-10'), strSecond[0]);
-    }
+    if (secondsVisible) {
+      if (currStrSecond[0] != strSecond[0]) {
+        animateNewNumber(getNumberContainer('second-10'),
+            getCurrentNumberElement('second-10'), strSecond[0]);
+      }
 
-    if (currStrSecond[1] != strSecond[1]) {
-      animateNewNumber(getNumberContainer('second-1'),
-          getCurrentNumberElement('second-1'), strSecond[1]);
+      if (currStrSecond[1] != strSecond[1]) {
+        animateNewNumber(getNumberContainer('second-1'),
+            getCurrentNumberElement('second-1'), strSecond[1]);
+      }
     }
 
     if (currentDate.getMinutes() != date.getMinutes()) {
@@ -109,10 +116,27 @@ function Clock() {
     }, 0);
   }
 
+  function updateSecondsVisibility() {
+    if (secondsVisible) {
+      perspectiveEl.classList.remove('no-seconds');
+    } else {
+      perspectiveEl.classList.add('no-seconds');
+    }
+  }
+
   function resize() {
     perspectiveEl.style.top = (window.innerHeight - 140) / 2 + 'px';
   }
+
+  this.isSecondsVisible = function() {
+    return secondsVisible;
+  };
+
+  this.setSecondsVisible = function(visible) {
+    window.localStorage.setItem(SECONDS_KEY, visible);
+    secondsVisible = visible;
+    updateSecondsVisibility();
+  };
 }
 
-
-new Clock()
+var clock = new Clock()

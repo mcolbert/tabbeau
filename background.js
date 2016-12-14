@@ -3,10 +3,12 @@ function Background() {
   var img = null;
   var imgAspectRatio = 1;
   var CACHE_KEY = '500px-cache';
-
+  var BLUR_KEY = 'blur';
   // 1 hour cache on 500px queries, this should pretty much eliminate any real
   // QPS.
   var CACHE_LENGTH_MS = 60 * 60 * 1000;
+
+  var blurPixels = window.localStorage.getItem(BLUR_KEY);
 
   var whitelistCats = {
     11: 'Animals',
@@ -56,6 +58,7 @@ function Background() {
     img.classList.add('bg-image');
     img.classList.add('hidden');
     resize();
+    setBlur();
     img.src = photo.image_url;
     setupUser(photo.user);
     img.onload = function() {
@@ -99,8 +102,28 @@ function Background() {
 
     link.href = 'http://www.500px.com/' + user.username;
     name.textContent = 'Photo by ' + user.fullname;
-    image.src = user.userpic_url;
+
+    var userPicUrl = user.userpic_url;
+    if (userPicUrl.lastIndexOf('http', 0) != 0) {
+      userPicUrl = 'http://www.500px.com' + userPicUrl
+    }
+    image.src = userPicUrl;
   }
+
+  function setBlur() {
+    if (parseInt(blurPixels, 10) != blurPixels) return;
+    img.style.webkitFilter = 'blur(' + blurPixels + 'px)';
+  }
+
+  this.setImageBlur = function(blur) {
+    blurPixels = blur;
+    window.localStorage.setItem(BLUR_KEY, blur);
+    setBlur();
+  };
+
+  this.getImageBlur = function() {
+    return blurPixels;
+  };
 }
 
-new Background();
+var background = new Background();

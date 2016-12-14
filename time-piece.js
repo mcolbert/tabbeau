@@ -2,11 +2,15 @@ function TimePiece() {
   var canvas = document.getElementById('time-piece');
   var ctx = canvas.getContext('2d');
 
+  var VISIBILITY_KEY = 'clock-visible';
+  var ROTATION_KEY = 'clock-rotate';
+
   var PROJECT_DISTANCE = 500;
-
   var MAX_COMPONENTS = 100;
-
   var TRANSLATE = getTranslateMatrix(0, 0, PROJECT_DISTANCE);
+
+  var rotateEnabled = Utils.getBooleanValue(ROTATION_KEY, true);
+  var visible = Utils.getBooleanValue(VISIBILITY_KEY, true);
 
   resize();
   window.addEventListener('resize', resize);
@@ -17,9 +21,12 @@ function TimePiece() {
   }
 
   function draw() {
+    if (!visible) {
+      return;
+    }
+
     var now = Date.now();
     var time = now / 1000 % 60;
-    var radians = time / 60 * 2.0 * Math.PI;
 
     // TODO: Use a bezier curve here or something better than this linear crap.
 
@@ -31,15 +38,18 @@ function TimePiece() {
 
     time -= delayShift;
     time = time < 0 ? 60 + time : time;
-    var extraRotation = time < transitionTime ?
-        lerp(endRotAngle, flipRotAngle, time / transitionTime) :
-        lerp(startRotAngle, endRotAngle,
-            (time - transitionTime) / (60 - transitionTime));
+    var extraRotation = rotateEnabled ?
+        (time < transitionTime ?
+            lerp(endRotAngle, flipRotAngle, time / transitionTime) :
+            lerp(startRotAngle, endRotAngle,
+                (time - transitionTime) / (60 - transitionTime))) :
+        0;
     var rot = multMatrix(TRANSLATE, getRotationMatrix(extraRotation, 0, 1, 0.2));
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
 
+    var radians = time / 60 * 2.0 * Math.PI;
     var x = 0; // x coordinate
     var y = 0; // y coordinate
     var radius = Math.min(1, Math.sqrt(time * 3)) * 100; // Arc radius
@@ -60,7 +70,7 @@ function TimePiece() {
 
     ctx.strokeStyle = '';
     ctx.lineWidth = '';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.34)';
     ctx.fill();
 
     // Draw the stroke around the time piece to let people know what the heck
@@ -78,7 +88,15 @@ function TimePiece() {
     }
     ctx.stroke();
 
-    requestAnimationFrame(draw);
+    // DO NOT SUBMIT
+    if (time < transitionTime || time > (60 - 1.0 / 10)) {
+      // High quality animation, make sure to get as much FPS as possible.
+      requestAnimationFrame(draw, canvas);
+    } else {
+      // Only run at 10 FPS if we are doing minor clock animation to reduce
+      // the load on the CPU/battery.
+      window.setTimeout(function() { draw(); }, 1000 / 10); //window.requestAnimationFrame(draw, canvas); }, 100);
+    }
   }
 
   function getRotationMatrix(angle, x, y, z) {
@@ -142,6 +160,26 @@ function TimePiece() {
   function resize() {
     canvas.style.top = (window.innerHeight - canvas.height) / 2 + 'px';
   }
+
+  this.setVisible = function(visibility) {
+    visible = visibility;
+    window.localStorage.setItem(VISIBILITY_KEY, visible);
+    canvas.style.display = visible ? '' : 'none';
+    draw();
+  };
+
+  this.isVisible = function() {
+    return visible;
+  };
+
+  this.isClockRotationEnabled = function() {
+    return rotateEnabled;
+  };
+
+  this.setClockRotationEnabled = function(enable) {
+    rotateEnabled = enable;
+    window.localStorage.setItem(ROTATION_KEY, enable);
+  };
 }
 
-new TimePiece();
+var timePiece = new TimePiece();
